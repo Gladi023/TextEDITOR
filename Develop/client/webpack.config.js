@@ -12,8 +12,11 @@ module.exports = () => {
   return {
     mode: 'development',
     entry: {
-      main: '../src/js/index.js',
-      install: '../src/js/install.js'
+      main: './src/js/index.js',
+      install: './src/js/install.js',
+      database: './src/js/database.js',
+      editor: './src/js/editor.js',
+      header: './src/js/header.js'
     },
     output: {
       filename: '[name].bundle.js',
@@ -21,9 +24,13 @@ module.exports = () => {
     },
     // Using the 'InjectManifest' plugin to generate a s worker that will precache the files specified in the config file 
     plugins: [
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        title: 'JATE'
+      }),
       new InjectManifest({
-        swSrc: './src/sw.js',
-        swDest: 'sw.js'
+        swSrc: './src-sw.js',
+        swDest: 'src-sw.js',
       }),
       new WebpackPwaManifest({
         name: 'My Awesome PWA',
