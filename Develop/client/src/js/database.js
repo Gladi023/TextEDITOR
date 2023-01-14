@@ -1,4 +1,5 @@
 import { openDB } from 'idb';
+import { MongoClient } from 'mongodb';
 
 const initdb = async () =>
   openDB('jate', 1, {
@@ -12,10 +13,29 @@ const initdb = async () =>
     },
   });
 
-// TODO: Add logic to a method that accepts some content and adds it to the database
-export const putDb = async (content) => console.error('putDb not implemented');
+  export const putDb = async (content) => {
+    try {
+        const client = await MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true });
+        const db = client.db('myDatabase');
+        const collection = db.collection('myCollection');
+        await collection.insertOne(content);
+        client.close();
+    } catch (err) {
+        console.error(err);
+    }
+};
 
-// TODO: Add logic for a method that gets all the content from the database
-export const getDb = async () => console.error('getDb not implemented');
+export const getDb = async () => {
+  try {
+      const client = await MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true });
+      const db = client.db('myDatabase');
+      const collection = db.collection('myCollection');
+      const docs = await collection.find({}).toArray();
+      client.close();
+      return docs;
+  } catch (err) {
+      console.error(err);
+  }
+};
 
 initdb();
