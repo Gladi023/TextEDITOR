@@ -33,16 +33,19 @@ module.exports = () => {
         swDest: 'src-sw.js',
       }),
       new WebpackPwaManifest({
-        name: 'My Awesome PWA',
-        short_name: 'MyPWA',
-        description: 'My awesome Progressive Web App!',
+        fingerprints: false,
+        inject: true,
+        name: 'Just Another Text Editor',
+        short_name: 'JATE',
+        description: 'Just another text editor',
         background_color: '#ffffff',
         theme_color: '#333333',
         start_url: '/',
         icons: [
           {
-            src: path.resolve('src/assets/icon.png'),
-            sizes: [96, 128, 192, 256, 384, 512]
+            src: path.resolve('src/images/logo.png'),
+            sizes: [96, 128, 192, 256, 384, 512],
+            destination: path.join('assets', 'icons'),
           },
         ],
       }),
@@ -50,21 +53,24 @@ module.exports = () => {
 
     module: {
       rules: [
+        
         {
-          test: /\.js$/,
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.m?js$/,
           exclude: /node_modules/,
+          // Babel loader
           use: {
             loader: 'babel-loader',
             options: {
-              presets: ['@babel/preset-env']
-            }
-          }
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime'],
+            },
+          },
         },
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use
-        }
+
         
       ],
     },
