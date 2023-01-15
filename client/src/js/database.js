@@ -1,41 +1,58 @@
-import { openDB } from 'idb';
-import { MongoClient } from 'mongodb';
+// import the idb package
+const idb = require('idb');
 
-const initdb = async () =>
-  openDB('jate', 1, {
-    upgrade(db) {
-      if (db.objectStoreNames.contains('jate')) {
-        console.log('jate database already exists');
-        return;
-      }
-      db.createObjectStore('jate', { keyPath: 'id', autoIncrement: true });
-      console.log('jate database created');
-    },
-  });
+// open the database connection
+const dbPromise = idb.open('jate', 1, upgradeDB => {
+    upgradeDB.createObjectStore('jate');
+});
 
-  export const putDb = async (content) => {
+const addData = async (data) => {
+    // add data to the object store
     try {
-        const client = await MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true });
-        const db = client.db('myDatabase');
-        const collection = db.collection('myCollection');
-        await collection.insertOne(content);
-        client.close();
-    } catch (err) {
-        console.error(err);
+        const db = await dbPromise;
+        const tx = db.transaction('jate', 'readwrite');
+        const store = tx.objectStore('jate');
+        store.add(data);
+        await tx.complete;
+    } catch (error) {
+        console.log(error);
     }
-};
+}
 
-export const getDb = async () => {
-  try {
-      const client = await MongoClient.connect('mongodb://localhost:27017', { useUnifiedTopology: true });
-      const db = client.db('myDatabase');
-      const collection = db.collection('myCollection');
-      const docs = await collection.find({}).toArray();
-      client.close();
-      return docs;
-  } catch (err) {
-      console.error(err);
+const getData = async (id) => {
+    // retrieve data from the object store
+    try {
+        const db = await dbPromise;
+        const tx = db.transaction('jate', 'readonly');
+        const store = tx.objectStore('jate');
+        return store.get(id);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const updateData = async (id, data) => {
+    // update data in the object store
+    try {
+        const db = await dbPromise;
+        const tx = db.transaction('jate', 'readwrite');
+        const store = tx.objectStore('jate');
+        store.put(id);
+        await tx.complete;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const deleteData = async (id) => {
+    // delete data from the object store
+    try {
+        const db = await dbPromise;
+        const tx = db.transaction('jate', 'readwrite');
+        const store = tx.objectStore('jate');
+        store.delete(data, id);
+        await tx.complete;
+    } catch (error) {
+      console.log(error);
+    }
   }
-};
-
-initdb();
