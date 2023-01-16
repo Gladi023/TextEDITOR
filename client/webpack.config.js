@@ -12,12 +12,12 @@ module.exports = () => {
   return {
     mode: 'development',
     entry: {
-      main: './src/js/index.js',
-      install: './src/js/install.js',
-      database: './src/js/database.js',
-      editor: './src/js/editor.js',
-      header: './src/js/header.js'
-    },
+      main: './client/src/js/index.js',
+      install: './client/src/js/install.js',
+      database: './client/src/js/database.js',
+      editor: './client/src/js/editor.js',
+      header: './client/src/js/header.js'
+      },
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist'),
